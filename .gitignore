@@ -1,0 +1,41 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+pgbot-webapp/node_modules
+pgbot-webapp/.pnp
+pgbot-webapp/.pnp.*
+pgbot-webapp/.yarn/*
+pgbot-webapp/!.yarn/patches
+pgbot-webapp/!.yarn/plugins
+pgbot-webapp/!.yarn/releases
+pgbot-webapp/!.yarn/versions
+
+# testing
+pgbot-webapp/coverage
+
+# next.js
+pgbot-webapp/.next/
+pgbot-webapp/out/
+
+# production
+pgbot-webapp/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+pgbot-webapp/npm-debug.log*
+pgbot-webapp/yarn-debug.log*
+pgbot-webapp/yarn-error.log*
+pgbot-webapp/.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+pgbot-webapp/.env*
+
+# vercel
+pgbot-webapp/.vercel
+
+# typescript
+pgbot-webapp/*.tsbuildinfo
+pgbot-webapp/next-env.d.ts
