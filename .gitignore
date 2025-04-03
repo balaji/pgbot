@@ -45,3 +45,6 @@ db/volumes/storage
 db/.env
 db/test.http
 db/docker-compose.override.yml
+
+# venv
+pgbot_venv/
