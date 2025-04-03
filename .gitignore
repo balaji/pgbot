@@ -1,41 +1,47 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-pgbot-webapp/node_modules
-pgbot-webapp/.pnp
-pgbot-webapp/.pnp.*
-pgbot-webapp/.yarn/*
-pgbot-webapp/!.yarn/patches
-pgbot-webapp/!.yarn/plugins
-pgbot-webapp/!.yarn/releases
-pgbot-webapp/!.yarn/versions
+webapp/node_modules
+webapp/.pnp
+webapp/.pnp.*
+webapp/.yarn/*
+webapp/!.yarn/patches
+webapp/!.yarn/plugins
+webapp/!.yarn/releases
+webapp/!.yarn/versions
 
 # testing
-pgbot-webapp/coverage
+webapp/coverage
 
 # next.js
-pgbot-webapp/.next/
-pgbot-webapp/out/
+webapp/.next/
+webapp/out/
 
 # production
-pgbot-webapp/build
+webapp/build
 
 # misc
 .DS_Store
 *.pem
 
 # debug
-pgbot-webapp/npm-debug.log*
-pgbot-webapp/yarn-debug.log*
-pgbot-webapp/yarn-error.log*
-pgbot-webapp/.pnpm-debug.log*
+webapp/npm-debug.log*
+webapp/yarn-debug.log*
+webapp/yarn-error.log*
+webapp/.pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-pgbot-webapp/.env*
+webapp/.env*
 
 # vercel
-pgbot-webapp/.vercel
+webapp/.vercel
 
 # typescript
-pgbot-webapp/*.tsbuildinfo
-pgbot-webapp/next-env.d.ts
+webapp/*.tsbuildinfo
+webapp/next-env.d.ts
+
+db/volumes/db/data
+db/volumes/storage
+db/.env
+db/test.http
+db/docker-compose.override.yml

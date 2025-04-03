@@ -77,88 +77,88 @@ services:
     # https://unix.stackexchange.com/a/294837
     entrypoint: bash -c 'eval "echo \"$$(cat ~/temp.yml)\"" > ~/kong.yml && /docker-entrypoint.sh kong docker-start'
 
-  # auth:
-    # container_name: supabase-auth
-    # image: supabase/gotrue:v2.170.0
-    # restart: unless-stopped
-    # healthcheck:
-    #   test:
-    #     [
-    #       "CMD",
-    #       "wget",
-    #       "--no-verbose",
-    #       "--tries=1",
-    #       "--spider",
-    #       "http://localhost:9999/health"
-    #     ]
-    #   timeout: 5s
-    #   interval: 5s
-    #   retries: 3
-    # depends_on:
-    #   db:
-    #     # Disable this if you are using an external Postgres database
-    #     condition: service_healthy
-    #   analytics:
-    #     condition: service_healthy
-    # environment:
-    #   GOTRUE_API_HOST: 0.0.0.0
-    #   GOTRUE_API_PORT: 9999
-    #   API_EXTERNAL_URL: ${API_EXTERNAL_URL}
+  auth:
+    container_name: supabase-auth
+    image: supabase/gotrue:v2.170.0
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:9999/health"
+        ]
+      timeout: 5s
+      interval: 5s
+      retries: 3
+    depends_on:
+      db:
+        # Disable this if you are using an external Postgres database
+        condition: service_healthy
+      analytics:
+        condition: service_healthy
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: 9999
+      API_EXTERNAL_URL: ${API_EXTERNAL_URL}
 
-    #   GOTRUE_DB_DRIVER: postgres
-    #   GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
 
-    #   GOTRUE_SITE_URL: ${SITE_URL}
-    #   GOTRUE_URI_ALLOW_LIST: ${ADDITIONAL_REDIRECT_URLS}
-    #   GOTRUE_DISABLE_SIGNUP: ${DISABLE_SIGNUP}
+      GOTRUE_SITE_URL: ${SITE_URL}
+      GOTRUE_URI_ALLOW_LIST: ${ADDITIONAL_REDIRECT_URLS}
+      GOTRUE_DISABLE_SIGNUP: ${DISABLE_SIGNUP}
 
-    #   GOTRUE_JWT_ADMIN_ROLES: service_role
-    #   GOTRUE_JWT_AUD: authenticated
-    #   GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
-    #   GOTRUE_JWT_EXP: ${JWT_EXPIRY}
-    #   GOTRUE_JWT_SECRET: ${JWT_SECRET}
+      GOTRUE_JWT_ADMIN_ROLES: service_role
+      GOTRUE_JWT_AUD: authenticated
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      GOTRUE_JWT_EXP: ${JWT_EXPIRY}
+      GOTRUE_JWT_SECRET: ${JWT_SECRET}
 
-    #   GOTRUE_EXTERNAL_EMAIL_ENABLED: ${ENABLE_EMAIL_SIGNUP}
-    #   GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED: ${ENABLE_ANONYMOUS_USERS}
-    #   GOTRUE_MAILER_AUTOCONFIRM: ${ENABLE_EMAIL_AUTOCONFIRM}
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: ${ENABLE_EMAIL_SIGNUP}
+      GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED: ${ENABLE_ANONYMOUS_USERS}
+      GOTRUE_MAILER_AUTOCONFIRM: ${ENABLE_EMAIL_AUTOCONFIRM}
 
-    #   # Uncomment to bypass nonce check in ID Token flow. Commonly set to true when using Google Sign In on mobile.
-    #   # GOTRUE_EXTERNAL_SKIP_NONCE_CHECK: true
+      # Uncomment to bypass nonce check in ID Token flow. Commonly set to true when using Google Sign In on mobile.
+      # GOTRUE_EXTERNAL_SKIP_NONCE_CHECK: true
 
-    #   # GOTRUE_MAILER_SECURE_EMAIL_CHANGE_ENABLED: true
-    #   # GOTRUE_SMTP_MAX_FREQUENCY: 1s
-    #   GOTRUE_SMTP_ADMIN_EMAIL: ${SMTP_ADMIN_EMAIL}
-    #   GOTRUE_SMTP_HOST: ${SMTP_HOST}
-    #   GOTRUE_SMTP_PORT: ${SMTP_PORT}
-    #   GOTRUE_SMTP_USER: ${SMTP_USER}
-    #   GOTRUE_SMTP_PASS: ${SMTP_PASS}
-    #   GOTRUE_SMTP_SENDER_NAME: ${SMTP_SENDER_NAME}
-    #   GOTRUE_MAILER_URLPATHS_INVITE: ${MAILER_URLPATHS_INVITE}
-    #   GOTRUE_MAILER_URLPATHS_CONFIRMATION: ${MAILER_URLPATHS_CONFIRMATION}
-    #   GOTRUE_MAILER_URLPATHS_RECOVERY: ${MAILER_URLPATHS_RECOVERY}
-    #   GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: ${MAILER_URLPATHS_EMAIL_CHANGE}
+      # GOTRUE_MAILER_SECURE_EMAIL_CHANGE_ENABLED: true
+      # GOTRUE_SMTP_MAX_FREQUENCY: 1s
+      GOTRUE_SMTP_ADMIN_EMAIL: ${SMTP_ADMIN_EMAIL}
+      GOTRUE_SMTP_HOST: ${SMTP_HOST}
+      GOTRUE_SMTP_PORT: ${SMTP_PORT}
+      GOTRUE_SMTP_USER: ${SMTP_USER}
+      GOTRUE_SMTP_PASS: ${SMTP_PASS}
+      GOTRUE_SMTP_SENDER_NAME: ${SMTP_SENDER_NAME}
+      GOTRUE_MAILER_URLPATHS_INVITE: ${MAILER_URLPATHS_INVITE}
+      GOTRUE_MAILER_URLPATHS_CONFIRMATION: ${MAILER_URLPATHS_CONFIRMATION}
+      GOTRUE_MAILER_URLPATHS_RECOVERY: ${MAILER_URLPATHS_RECOVERY}
+      GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: ${MAILER_URLPATHS_EMAIL_CHANGE}
 
-    #   GOTRUE_EXTERNAL_PHONE_ENABLED: ${ENABLE_PHONE_SIGNUP}
-    #   GOTRUE_SMS_AUTOCONFIRM: ${ENABLE_PHONE_AUTOCONFIRM}
-    #   # Uncomment to enable custom access token hook. Please see: https://supabase.com/docs/guides/auth/auth-hooks for full list of hooks and additional details about custom_access_token_hook
+      GOTRUE_EXTERNAL_PHONE_ENABLED: ${ENABLE_PHONE_SIGNUP}
+      GOTRUE_SMS_AUTOCONFIRM: ${ENABLE_PHONE_AUTOCONFIRM}
+      # Uncomment to enable custom access token hook. Please see: https://supabase.com/docs/guides/auth/auth-hooks for full list of hooks and additional details about custom_access_token_hook
 
-    #   # GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_ENABLED: "true"
-    #   # GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_URI: "pg-functions://postgres/public/custom_access_token_hook"
-    #   # GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_SECRETS: "<standard-base64-secret>"
+      # GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_ENABLED: "true"
+      # GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_URI: "pg-functions://postgres/public/custom_access_token_hook"
+      # GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_SECRETS: "<standard-base64-secret>"
 
-    #   # GOTRUE_HOOK_MFA_VERIFICATION_ATTEMPT_ENABLED: "true"
-    #   # GOTRUE_HOOK_MFA_VERIFICATION_ATTEMPT_URI: "pg-functions://postgres/public/mfa_verification_attempt"
+      # GOTRUE_HOOK_MFA_VERIFICATION_ATTEMPT_ENABLED: "true"
+      # GOTRUE_HOOK_MFA_VERIFICATION_ATTEMPT_URI: "pg-functions://postgres/public/mfa_verification_attempt"
 
-    #   # GOTRUE_HOOK_PASSWORD_VERIFICATION_ATTEMPT_ENABLED: "true"
-    #   # GOTRUE_HOOK_PASSWORD_VERIFICATION_ATTEMPT_URI: "pg-functions://postgres/public/password_verification_attempt"
+      # GOTRUE_HOOK_PASSWORD_VERIFICATION_ATTEMPT_ENABLED: "true"
+      # GOTRUE_HOOK_PASSWORD_VERIFICATION_ATTEMPT_URI: "pg-functions://postgres/public/password_verification_attempt"
 
-    #   # GOTRUE_HOOK_SEND_SMS_ENABLED: "false"
-    #   # GOTRUE_HOOK_SEND_SMS_URI: "pg-functions://postgres/public/custom_access_token_hook"
-    #   # GOTRUE_HOOK_SEND_SMS_SECRETS: "v1,whsec_VGhpcyBpcyBhbiBleGFtcGxlIG9mIGEgc2hvcnRlciBCYXNlNjQgc3RyaW5n"
+      # GOTRUE_HOOK_SEND_SMS_ENABLED: "false"
+      # GOTRUE_HOOK_SEND_SMS_URI: "pg-functions://postgres/public/custom_access_token_hook"
+      # GOTRUE_HOOK_SEND_SMS_SECRETS: "v1,whsec_VGhpcyBpcyBhbiBleGFtcGxlIG9mIGEgc2hvcnRlciBCYXNlNjQgc3RyaW5n"
 
-    #   # GOTRUE_HOOK_SEND_EMAIL_ENABLED: "false"
-    #   # GOTRUE_HOOK_SEND_EMAIL_URI: "http://host.docker.internal:54321/functions/v1/email_sender"
-    #   # GOTRUE_HOOK_SEND_EMAIL_SECRETS: "v1,whsec_VGhpcyBpcyBhbiBleGFtcGxlIG9mIGEgc2hvcnRlciBCYXNlNjQgc3RyaW5n"
+      # GOTRUE_HOOK_SEND_EMAIL_ENABLED: "false"
+      # GOTRUE_HOOK_SEND_EMAIL_URI: "http://host.docker.internal:54321/functions/v1/email_sender"
+      # GOTRUE_HOOK_SEND_EMAIL_SECRETS: "v1,whsec_VGhpcyBpcyBhbiBleGFtcGxlIG9mIGEgc2hvcnRlciBCYXNlNjQgc3RyaW5n"
 
   rest:
     container_name: supabase-rest
@@ -183,50 +183,50 @@ services:
         "postgrest"
       ]
 
-  # realtime:
-    # # This container name looks inconsistent but is correct because realtime constructs tenant id by parsing the subdomain
-    # container_name: realtime-dev.supabase-realtime
-    # image: supabase/realtime:v2.34.43
-    # restart: unless-stopped
-    # depends_on:
-    #   db:
-    #     # Disable this if you are using an external Postgres database
-    #     condition: service_healthy
-    #   analytics:
-    #     condition: service_healthy
-    # healthcheck:
-    #   test:
-    #     [
-    #       "CMD",
-    #       "curl",
-    #       "-sSfL",
-    #       "--head",
-    #       "-o",
-    #       "/dev/null",
-    #       "-H",
-    #       "Authorization: Bearer ${ANON_KEY}",
-    #       "http://localhost:4000/api/tenants/realtime-dev/health"
-    #     ]
-    #   timeout: 5s
-    #   interval: 5s
-    #   retries: 3
-    # environment:
-    #   PORT: 4000
-    #   DB_HOST: ${POSTGRES_HOST}
-    #   DB_PORT: ${POSTGRES_PORT}
-    #   DB_USER: supabase_admin
-    #   DB_PASSWORD: ${POSTGRES_PASSWORD}
-    #   DB_NAME: ${POSTGRES_DB}
-    #   DB_AFTER_CONNECT_QUERY: 'SET search_path TO _realtime'
-    #   DB_ENC_KEY: supabaserealtime
-    #   API_JWT_SECRET: ${JWT_SECRET}
-    #   SECRET_KEY_BASE: ${SECRET_KEY_BASE}
-    #   ERL_AFLAGS: -proto_dist inet_tcp
-    #   DNS_NODES: "''"
-    #   RLIMIT_NOFILE: "10000"
-    #   APP_NAME: realtime
-    #   SEED_SELF_HOST: true
-    #   RUN_JANITOR: true
+  realtime:
+    # This container name looks inconsistent but is correct because realtime constructs tenant id by parsing the subdomain
+    container_name: realtime-dev.supabase-realtime
+    image: supabase/realtime:v2.34.43
+    restart: unless-stopped
+    depends_on:
+      db:
+        # Disable this if you are using an external Postgres database
+        condition: service_healthy
+      analytics:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-sSfL",
+          "--head",
+          "-o",
+          "/dev/null",
+          "-H",
+          "Authorization: Bearer ${ANON_KEY}",
+          "http://localhost:4000/api/tenants/realtime-dev/health"
+        ]
+      timeout: 5s
+      interval: 5s
+      retries: 3
+    environment:
+      PORT: 4000
+      DB_HOST: ${POSTGRES_HOST}
+      DB_PORT: ${POSTGRES_PORT}
+      DB_USER: supabase_admin
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
+      DB_AFTER_CONNECT_QUERY: 'SET search_path TO _realtime'
+      DB_ENC_KEY: supabaserealtime
+      API_JWT_SECRET: ${JWT_SECRET}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      ERL_AFLAGS: -proto_dist inet_tcp
+      DNS_NODES: "''"
+      RLIMIT_NOFILE: "10000"
+      APP_NAME: realtime
+      SEED_SELF_HOST: true
+      RUN_JANITOR: true
 
   # To use S3 backed storage: docker compose -f docker-compose.yml -f docker-compose.s3.yml up
   storage:
@@ -254,8 +254,8 @@ services:
         condition: service_healthy
       rest:
         condition: service_started
-      # imgproxy:
-      #   condition: service_started
+      imgproxy:
+        condition: service_started
     environment:
       ANON_KEY: ${ANON_KEY}
       SERVICE_KEY: ${SERVICE_ROLE_KEY}
@@ -272,69 +272,69 @@ services:
       ENABLE_IMAGE_TRANSFORMATION: "true"
       IMGPROXY_URL: http://imgproxy:5001
 
-  # imgproxy:
-  #   container_name: supabase-imgproxy
-  #   image: darthsim/imgproxy:v3.8.0
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./volumes/storage:/var/lib/storage:z
-  #   healthcheck:
-  #     test:
-  #       [
-  #         "CMD",
-  #         "imgproxy",
-  #         "health"
-  #       ]
-  #     timeout: 5s
-  #     interval: 5s
-  #     retries: 3
-  #   environment:
-  #     IMGPROXY_BIND: ":5001"
-  #     IMGPROXY_LOCAL_FILESYSTEM_ROOT: /
-  #     IMGPROXY_USE_ETAG: "true"
-  #     IMGPROXY_ENABLE_WEBP_DETECTION: ${IMGPROXY_ENABLE_WEBP_DETECTION}
+  imgproxy:
+    container_name: supabase-imgproxy
+    image: darthsim/imgproxy:v3.8.0
+    restart: unless-stopped
+    volumes:
+      - ./volumes/storage:/var/lib/storage:z
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "imgproxy",
+          "health"
+        ]
+      timeout: 5s
+      interval: 5s
+      retries: 3
+    environment:
+      IMGPROXY_BIND: ":5001"
+      IMGPROXY_LOCAL_FILESYSTEM_ROOT: /
+      IMGPROXY_USE_ETAG: "true"
+      IMGPROXY_ENABLE_WEBP_DETECTION: ${IMGPROXY_ENABLE_WEBP_DETECTION}
 
-  # meta:
-  #   container_name: supabase-meta
-  #   image: supabase/postgres-meta:v0.87.1
-  #   restart: unless-stopped
-  #   depends_on:
-  #     db:
-  #       # Disable this if you are using an external Postgres database
-  #       condition: service_healthy
-  #     analytics:
-  #       condition: service_healthy
-  #   environment:
-  #     PG_META_PORT: 8080
-  #     PG_META_DB_HOST: ${POSTGRES_HOST}
-  #     PG_META_DB_PORT: ${POSTGRES_PORT}
-  #     PG_META_DB_NAME: ${POSTGRES_DB}
-  #     PG_META_DB_USER: supabase_admin
-  #     PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
+  meta:
+    container_name: supabase-meta
+    image: supabase/postgres-meta:v0.87.1
+    restart: unless-stopped
+    depends_on:
+      db:
+        # Disable this if you are using an external Postgres database
+        condition: service_healthy
+      analytics:
+        condition: service_healthy
+    environment:
+      PG_META_PORT: 8080
+      PG_META_DB_HOST: ${POSTGRES_HOST}
+      PG_META_DB_PORT: ${POSTGRES_PORT}
+      PG_META_DB_NAME: ${POSTGRES_DB}
+      PG_META_DB_USER: supabase_admin
+      PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
 
-  # functions:
-  #   container_name: supabase-edge-functions
-  #   image: supabase/edge-runtime:v1.67.4
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./volumes/functions:/home/deno/functions:Z
-  #   depends_on:
-  #     analytics:
-  #       condition: service_healthy
-  #   environment:
-  #     JWT_SECRET: ${JWT_SECRET}
-  #     SUPABASE_URL: http://kong:8000
-  #     SUPABASE_ANON_KEY: ${ANON_KEY}
-  #     SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
-  #     SUPABASE_DB_URL: postgresql://postgres:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-  #     # TODO: Allow configuring VERIFY_JWT per function. This PR might help: https://github.com/supabase/cli/pull/786
-  #     VERIFY_JWT: "${FUNCTIONS_VERIFY_JWT}"
-  #   command:
-  #     [
-  #       "start",
-  #       "--main-service",
-  #       "/home/deno/functions/main"
-  #     ]
+  functions:
+    container_name: supabase-edge-functions
+    image: supabase/edge-runtime:v1.67.4
+    restart: unless-stopped
+    volumes:
+      - ./volumes/functions:/home/deno/functions:Z
+    depends_on:
+      analytics:
+        condition: service_healthy
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      SUPABASE_URL: http://kong:8000
+      SUPABASE_ANON_KEY: ${ANON_KEY}
+      SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
+      SUPABASE_DB_URL: postgresql://postgres:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      # TODO: Allow configuring VERIFY_JWT per function. This PR might help: https://github.com/supabase/cli/pull/786
+      VERIFY_JWT: "${FUNCTIONS_VERIFY_JWT}"
+    command:
+      [
+        "start",
+        "--main-service",
+        "/home/deno/functions/main"
+      ]
 
   analytics:
     container_name: supabase-analytics
