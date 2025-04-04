@@ -30,9 +30,6 @@ webapp/yarn-debug.log*
 webapp/yarn-error.log*
 webapp/.pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-webapp/.env*
-
 # vercel
 webapp/.vercel
 
