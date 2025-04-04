@@ -100,12 +100,53 @@ def _find_processed_urls() -> set[str]:
     return processed_urls
 
 
+def _create_query_function() -> None:
+    """
+    This function is used by the langchain library for retrieval.
+    """
+    cursor = DB_CONNECTION.cursor()
+    cursor.execute(
+        """
+        create or replace function test_function (
+        query_embedding vector,
+        match_count int DEFAULT null,
+        filter jsonb DEFAULT '{}'
+        ) returns table (
+        id varchar,
+        content varchar,
+        metadata jsonb,
+        embedding jsonb,
+        similarity float
+        )
+        language plpgsql
+        as $$
+        #variable_conflict use_column
+        begin
+        return query
+        select
+            id,
+            document as content,
+            cmetadata as metadata,
+            (embedding::text)::jsonb as embedding,
+            1 - (documents.embedding <=> query_embedding) as similarity
+        from langchain_pg_embedding as documents
+        where cmetadata @> filter
+        order by documents.embedding <=> query_embedding
+        limit match_count;
+        end;
+        $$;
+        """
+    )
+    cursor.close()
+
+
 def main() -> int:
     links = _article_links()
     processed_urls = _find_processed_urls()
     res = _load_data(links - processed_urls)
     if res == 0:
         _update_progress(links - processed_urls)
+        _create_query_function()
     return res
 
 
