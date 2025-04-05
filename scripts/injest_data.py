@@ -9,16 +9,11 @@ from langchain_community.document_loaders import WebBaseLoader
 from langchain_openai import OpenAIEmbeddings
 from langchain_postgres import PGVector
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from psycopg import Connection
 
 load_dotenv()
 
 BASE_URL: str = "https://paulgraham.com"
 _CONN_SUFFIX: str = f"{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
-VECTOR_CONNECTION: str = f"postgresql+psycopg://{_CONN_SUFFIX}"
-DB_CONNECTION: Connection = psycopg.connect(
-    conninfo=f"postgresql://{_CONN_SUFFIX}", autocommit=True
-)
 
 
 def _vector_store() -> PGVector:
@@ -29,7 +24,7 @@ def _vector_store() -> PGVector:
     vector_store = PGVector(
         embeddings=embeddings,
         collection_name="pg_articles",
-        connection=VECTOR_CONNECTION,
+        connection=f"postgresql+psycopg://{_CONN_SUFFIX}",
     )
     return vector_store
 
@@ -79,24 +74,30 @@ def _update_progress(urls: set[str]) -> None:
     Inserts all processed URLs in the database. This is used to avoid reprocessing
     URLs that have already been processed.
     """
-    cursor = DB_CONNECTION.cursor()
-    for url in urls:
-        # Check if the URL is already processed
-        cursor.execute(
-            "INSERT INTO processed_urls (url) VALUES (%s) ON CONFLICT DO NOTHING",
-            (url,),
-        )
-    cursor.close()
+    with psycopg.connect(
+        conninfo=f"postgresql://{_CONN_SUFFIX}", autocommit=True
+    ) as connection:
+        cursor = connection.cursor()
+        for url in urls:
+            # Check if the URL is already processed
+            cursor.execute(
+                "INSERT INTO processed_urls (url) VALUES (%s) ON CONFLICT DO NOTHING",
+                (url,),
+            )
+        cursor.close()
 
 
 def _find_processed_urls() -> set[str]:
     """
     Find all processed URLs in the database.
     """
-    cursor = DB_CONNECTION.cursor()
-    cursor.execute("SELECT url FROM processed_urls")
-    processed_urls = {row[0] for row in cursor.fetchall()}
-    cursor.close()
+    with psycopg.connect(
+        conninfo=f"postgresql://{_CONN_SUFFIX}", autocommit=True
+    ) as connection:
+        cursor = connection.cursor()
+        cursor.execute("SELECT url FROM processed_urls")
+        processed_urls = {row[0] for row in cursor.fetchall()}
+        cursor.close()
     return processed_urls
 
 
@@ -104,40 +105,43 @@ def _create_query_function() -> None:
     """
     This function is used by the langchain library for retrieval.
     """
-    cursor = DB_CONNECTION.cursor()
-    cursor.execute(
-        """
-        create or replace function test_function (
-        query_embedding vector,
-        match_count int DEFAULT null,
-        filter jsonb DEFAULT '{}'
-        ) returns table (
-        id varchar,
-        content varchar,
-        metadata jsonb,
-        embedding jsonb,
-        similarity float
+    with psycopg.connect(
+        conninfo=f"postgresql://{_CONN_SUFFIX}", autocommit=True
+    ) as connection:
+        cursor = connection.cursor()
+        cursor.execute(
+            """
+            create or replace function test_function (
+            query_embedding vector,
+            match_count int DEFAULT null,
+            filter jsonb DEFAULT '{}'
+            ) returns table (
+            id varchar,
+            content varchar,
+            metadata jsonb,
+            embedding jsonb,
+            similarity float
+            )
+            language plpgsql
+            as $$
+            #variable_conflict use_column
+            begin
+            return query
+            select
+                id,
+                document as content,
+                cmetadata as metadata,
+                (embedding::text)::jsonb as embedding,
+                1 - (documents.embedding <=> query_embedding) as similarity
+            from langchain_pg_embedding as documents
+            where cmetadata @> filter
+            order by documents.embedding <=> query_embedding
+            limit match_count;
+            end;
+            $$;
+            """
         )
-        language plpgsql
-        as $$
-        #variable_conflict use_column
-        begin
-        return query
-        select
-            id,
-            document as content,
-            cmetadata as metadata,
-            (embedding::text)::jsonb as embedding,
-            1 - (documents.embedding <=> query_embedding) as similarity
-        from langchain_pg_embedding as documents
-        where cmetadata @> filter
-        order by documents.embedding <=> query_embedding
-        limit match_count;
-        end;
-        $$;
-        """
-    )
-    cursor.close()
+        cursor.close()
 
 
 def main() -> int:
