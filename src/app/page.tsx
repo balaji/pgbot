@@ -35,7 +35,6 @@ export default function Page() {
     const response = await fetch('/api/chat', {
       method: 'POST',
       body: JSON.stringify({
-        messages: messages,
         input: question,
       }),
     });
