@@ -23,7 +23,6 @@ fi
 echo "Loading articles from the web..."
 python scripts/injest_data.py
 
-cd ./webapp || exit 1
 echo "Starting webapp..."
 npm install
 npm run build
